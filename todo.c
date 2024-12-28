@@ -12,7 +12,7 @@ void printOptions();
 int getUserInput(int* selection);
 void addTask(struct arrayOfStrings *myArray);
 void viewTasks(struct arrayOfStrings *myArray);
-void deleteTasks();
+void deleteTasks(struct arrayOfStrings *myArray);
 void printCell(char* cellValue);
 
 int main() {
@@ -32,13 +32,6 @@ int main() {
         printf("memory allocation failed!");
     }
 
-    for(int i = 0; i < myArray->size; i++){
-        printf("%p\n", &myArray->stringArrayPtr[i]);
-    }
-    
-    
-
-
     printf("\n\nWelcome to the To-do List Manager\n\n\n");
 
 
@@ -53,7 +46,7 @@ int main() {
                 viewTasks(myArray);
                 break;
             case 3:
-                deleteTasks();
+                deleteTasks(myArray);
                 break;
             case 4:
                 loop = false;
@@ -81,13 +74,13 @@ void addTask(struct arrayOfStrings *myArray){
     scanf("%s", inputString);
     printf("\n\n");
     printf("You entered: %s\n", inputString);
-    // myArray.stringArrayPtr[0] = inputString;
 
     //Search through the array until we find a null pointer
     //Then add the new task there
     for(int i = 0; i < myArray->size; i++){
         if(myArray->stringArrayPtr[i] != NULL){
             if(i == myArray->size-1){
+                //If last element was not null, array is full, increase size
                 int newSize = myArray->size + 10;
                 char **newArray = realloc(myArray->stringArrayPtr, newSize * sizeof(char*));
                 if (newArray == NULL) {
@@ -108,17 +101,28 @@ void addTask(struct arrayOfStrings *myArray){
 void viewTasks(struct arrayOfStrings *myArray){
     printf("Current Tasks: \n");
     
-        
     for(int i = 0; i < myArray->size; i++){
         if(myArray->stringArrayPtr[i] == NULL) return;
         printCell(myArray->stringArrayPtr[i]);
-        // printf("%s\n", myArray->stringArrayPtr[i]);
     }
 
 }
-void deleteTasks(){
-   
+void deleteTasks(struct arrayOfStrings *myArray){
+    printf("Enter the task to delete\n");
+   char* taskToDelete = malloc(20 * sizeof(char));
+   scanf("%s", taskToDelete);
+   for(int i = 0; i < myArray->size; i++){
+    if(myArray->stringArrayPtr[i] != NULL && strcmp(myArray->stringArrayPtr[i], taskToDelete) == 0){
+        free(myArray->stringArrayPtr[i]);
+        myArray->stringArrayPtr[i]= NULL;
+        printf("Deleted Task: %s", taskToDelete);
+        break;
+    }
+   }
+   free(taskToDelete);
 }
+//Create a cell around text +--+
+                        //  +--+
 void printCell(char* cellValue){
     int sizeOfValue = strlen(cellValue);
     char *topBorder = malloc((2 + sizeOfValue) * sizeof(char));
