@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdbool.h"
 #include "stdlib.h"
+#include <string.h>
 
 struct arrayOfStrings{
 int size;
@@ -12,6 +13,7 @@ int getUserInput(int* selection);
 void addTask(struct arrayOfStrings *myArray);
 void viewTasks(struct arrayOfStrings *myArray);
 void deleteTasks();
+void printCell(char* cellValue);
 
 int main() {
     int selection;
@@ -81,8 +83,21 @@ void addTask(struct arrayOfStrings *myArray){
     printf("You entered: %s\n", inputString);
     // myArray.stringArrayPtr[0] = inputString;
 
+    //Search through the array until we find a null pointer
+    //Then add the new task there
     for(int i = 0; i < myArray->size; i++){
         if(myArray->stringArrayPtr[i] != NULL){
+            if(i == myArray->size-1){
+                int newSize = myArray->size + 10;
+                char **newArray = realloc(myArray->stringArrayPtr, newSize * sizeof(char*));
+                if (newArray == NULL) {
+                    printf("Memory allocation failed!\n");
+                    exit(1);
+                }
+                myArray->stringArrayPtr = newArray;
+                myArray->size = newSize;
+
+            }
             continue;
         }
         printf("Adding task: %s", inputString);
@@ -92,11 +107,40 @@ void addTask(struct arrayOfStrings *myArray){
 }
 void viewTasks(struct arrayOfStrings *myArray){
     printf("Current Tasks: \n");
+    
+        
     for(int i = 0; i < myArray->size; i++){
-        printf("%s\n", myArray->stringArrayPtr[i]);
+        if(myArray->stringArrayPtr[i] == NULL) return;
+        printCell(myArray->stringArrayPtr[i]);
+        // printf("%s\n", myArray->stringArrayPtr[i]);
     }
 
 }
 void deleteTasks(){
    
+}
+void printCell(char* cellValue){
+    int sizeOfValue = strlen(cellValue);
+    char *topBorder = malloc((2 + sizeOfValue) * sizeof(char));
+    char *cells = malloc((2 + sizeOfValue) * sizeof(char));
+        cells[0] = '|';
+        for(int i = 1; i <= sizeOfValue; i++){
+            cells[i] = ' ';
+        }
+        strncpy(&cells[1], cellValue, sizeOfValue);
+        cells[sizeOfValue + 1] = '|';
+        cells[sizeOfValue + 2] = '\0';
+        topBorder[0] = '+';
+        for(int i = 1; i <= sizeOfValue; i++){
+            topBorder[i] = '-';
+        }
+        topBorder[sizeOfValue + 1] = '+';
+        topBorder[sizeOfValue + 2] = '\0';
+
+        printf("%s\n", topBorder);
+        printf("%s\n", cells);
+        printf("%s\n", topBorder);
+
+        free(topBorder);
+        free(cells);
 }
