@@ -24,8 +24,9 @@ int main() {
     myArray->size = 10;
     myArray->stringArrayPtr = malloc(myArray->size * sizeof(char*));
 
+    //init all pointers to null
     for(int i = 0; i < myArray->size; i++ ){
-        myArray->stringArrayPtr[0] = NULL;
+        myArray->stringArrayPtr[i] = NULL;
     }
     
     if(myArray->stringArrayPtr == 0 || myArray->stringArrayPtr == NULL){
@@ -57,7 +58,12 @@ int main() {
             
         }
     }
-    
+    for (int i =0; i<myArray->size; i++){
+        free(myArray->stringArrayPtr[i]);
+        myArray->stringArrayPtr[i] = NULL;
+    }
+    free(myArray->stringArrayPtr);
+    free(myArray);
 }
 
 void printOptions(){
@@ -71,7 +77,7 @@ int getUserInput(int *selection){
 void addTask(struct arrayOfStrings *myArray){
     char* inputString = malloc(20 * sizeof(char));
     printf("Please enter a task\n");
-    scanf("%s", inputString);
+    scanf("%19s", inputString);
     printf("\n\n");
     printf("You entered: %s\n", inputString);
 
@@ -89,12 +95,12 @@ void addTask(struct arrayOfStrings *myArray){
                 }
                 myArray->stringArrayPtr = newArray;
                 myArray->size = newSize;
-
+                break;
             }
             continue;
         }
         printf("Adding task: %s", inputString);
-            myArray->stringArrayPtr[i] = inputString;
+        myArray->stringArrayPtr[i] = inputString;
             break;
     }
 }
